@@ -41,12 +41,12 @@ namespace BINOMIAL_HEAP {
     h->min_data = (void *) (h+1);
     memcpy( h->min_data, min_data, data_len );
     h->data_len = data_len;
-    h->heap = init_heap( h->ba );
+    h->heap = init_heap( );
     return h;
   }
 
   void destroy( struct HANDLE * &h ) {
-    destroy_heap( h->heap, h->ba );
+    destroy_heap( h->heap );
     free( h );
     h = NULL;
   }
@@ -119,7 +119,7 @@ namespace BINOMIAL_HEAP {
   void merge( struct HANDLE * h, struct BHEAP * h1, struct BHEAP * h2 ) {
     struct NODE * h1_roots = h1->roots;
     struct NODE * h2_roots = h2->roots;
-    struct BHEAP * merged = init_heap( h->ba );
+    struct BHEAP * merged = init_heap( );
     struct NODE * merged_roots = merged->roots;
     struct NODE * merged_prev = NULL;
     while( h1_roots && h2_roots ) {
@@ -147,8 +147,8 @@ namespace BINOMIAL_HEAP {
       merged->roots = merged_roots;
     else
       merged_prev->sibling = merged_roots;
-    destroy_heap(h1, h->ba);
-    destroy_heap(h2, h->ba);
+    destroy_heap(h1);
+    destroy_heap(h2);
     h->heap = merged;
   }
 
@@ -184,7 +184,7 @@ namespace BINOMIAL_HEAP {
   }
 
   struct NODE * insert( struct HANDLE * h, void * data ) {
-    struct BHEAP * temp = init_heap( h->ba );
+    struct BHEAP * temp = init_heap( );
     struct NODE * node = (struct NODE *) calloc( 1, sizeof(struct NODE) + h->data_len );
     node->data = node+1;
     memcpy( node->data, data, h->data_len );
@@ -230,7 +230,7 @@ namespace BINOMIAL_HEAP {
   void extract_min( struct HANDLE * h, void * buf ) {
     struct NODE * min_root = find_min_root( h );
     remove_min_from_roots( h, min_root );
-    struct BHEAP * temp = init_heap( h->ba );
+    struct BHEAP * temp = init_heap( );
     min_root->child = reverse_list( min_root->child );
     for( struct NODE * tmp = min_root->child; tmp != NULL; tmp = tmp->sibling ) {
       assert(tmp->parent == min_root);
